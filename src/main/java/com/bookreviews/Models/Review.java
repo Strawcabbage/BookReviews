@@ -32,4 +32,14 @@ public class Review {
     @Column(name="COMMENTARY")
     private String commentary;
 
+    @Getter
+    @Column(name="REVIEW_STATUS")
+    private ReviewStatus reviewStatus;
+
+    public void setReviewStatus(User user, Review review, ReviewStatus newReviewStatus) {
+        if (user.getAdmin() && review.reviewStatus == ReviewStatus.Pending) {
+            review.reviewStatus = newReviewStatus;
+        }
+    }
+
 }

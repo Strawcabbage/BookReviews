@@ -54,10 +54,12 @@ public class User {
             inverseJoinColumns = { @JoinColumn(name="book_id") })
     private List<Book> readingBookList;
 
-    @Getter
     @Setter
     @Column(name="ADMIN")
-    private boolean Admin;
+    private boolean admin;
 
 
+    public boolean getAdmin() {
+        return this.admin;
+    }
 }
