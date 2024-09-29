@@ -1,6 +1,6 @@
 package com.bookreviews.Models;
 
-public enum Status {
+public enum ReadStatus {
 
     Reading, Unread, Read, Wishlist
 

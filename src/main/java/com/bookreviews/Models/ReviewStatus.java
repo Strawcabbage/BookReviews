@@ -1,2 +1,4 @@
-package com.bookreviews.Models;public enum ReviewStatus {
+package com.bookreviews.Models;
+
+public enum ReviewStatus {
 }
