@@ -19,6 +19,11 @@ public class Review {
 
     @Getter
     @Setter
+    @Column(name="BOOK_ID")
+    private Long bookId;
+
+    @Getter
+    @Setter
     @Column(name="RATING")
     private double rating;
 
