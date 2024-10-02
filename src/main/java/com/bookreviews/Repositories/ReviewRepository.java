@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface ReviewRepository extends CrudRepository<Review, Integer> {
+public interface ReviewRepository extends CrudRepository<Review, Long> {
 
     public List<Review> findByDisplayName(String displayName);
 

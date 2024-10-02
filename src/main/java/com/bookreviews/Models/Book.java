@@ -11,6 +11,7 @@ import java.util.List;
 public class Book {
 
     @Id
+    @Getter
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -29,6 +30,8 @@ public class Book {
     @Column(name="PUBLISH_DATE")
     private String publishDate;
 
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(name="book_genres",
             joinColumns = { @JoinColumn(name="book_id") },
@@ -40,14 +43,5 @@ public class Book {
     @Column(name="RATING")
     private double rating;
 
-    @Getter
-    @Setter
-    @Column(name="READING_STATUS")
-    private ReadStatus readStatus;
-
-    @Getter
-    @Setter
-    @Column(name="PERCENT_READ")
-    private double percentRead;
 
 }

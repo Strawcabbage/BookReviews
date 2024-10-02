@@ -30,29 +30,37 @@ public class User {
     @Column(name="BIRTH_DATE")
     private String birthDate;
 
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(name="user_genres",
             joinColumns = { @JoinColumn(name="user_id") },
             inverseJoinColumns = { @JoinColumn(name="genre_id") })
     private List<Genre> genreList;
 
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(name="read_user_books",
             joinColumns = { @JoinColumn(name="user_id") },
             inverseJoinColumns = { @JoinColumn(name="book_id") })
-    private List<Book> readBookList;
+    private List<UserBook> readBookList;
 
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(name="wishlist_user_books",
             joinColumns = { @JoinColumn(name="user_id") },
             inverseJoinColumns = { @JoinColumn(name="book_id") })
-    private List<Book> wishlistBookList;
+    private List<UserBook> wishlistBookList;
 
+    @Getter
+    @Setter
     @ManyToMany
     @JoinTable(name="reading_user_books",
             joinColumns = { @JoinColumn(name="user_id") },
             inverseJoinColumns = { @JoinColumn(name="book_id") })
-    private List<Book> readingBookList;
+    private List<UserBook> readingBookList;
 
     @Setter
     @Column(name="ADMIN")

@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface BookRepository extends CrudRepository<Book, Integer> {
+public interface BookRepository extends CrudRepository<Book, Long> {
 
     public List<Book> findByAuthor(String author);
 
@@ -17,11 +17,6 @@ public interface BookRepository extends CrudRepository<Book, Integer> {
 
     public List<Book> findByGenreListIsContainingIgnoreCase(Genre genre);
 
-    public List<Book> findByReadStatus(ReadStatus readStatus);
-
     public List<Book> findByRatingGreaterThan(double rating);
-
-    public List<Book> findByPercentReadGreaterThan(double percentRead);
-
 
 }
