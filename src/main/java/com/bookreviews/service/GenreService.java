@@ -1,0 +1,19 @@
+package com.bookreviews.service;
+
+import com.bookreviews.entity.Genre;
+import com.bookreviews.repository.GenreRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Set;
+
+@Service
+public class GenreService {
+
+    private final GenreRepository genreRepository;
+
+    public GenreService(GenreRepository genreRepository) {this.genreRepository = genreRepository;}
+
+    public Set<Genre> resolveByIds(List<Long> genre_ids) {return this.genreRepository.findByIdIn(genre_ids);}
+
+}
