@@ -1,0 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bookreviews
+    username: bookapp
+    password: 4854
+  jpa:
+    hibernate:
+      ddl-auto: update   # dev only

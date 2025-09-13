@@ -1,4 +1,4 @@
-package com.bookreviews.Models;
+package com.example.bookreviews.entity;
 
 public enum ReadStatus {
 

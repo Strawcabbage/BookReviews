@@ -1,9 +1,10 @@
-package com.bookreviews.Models;
+package com.example.bookreviews.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,6 +13,7 @@ public class Book {
 
     @Id
     @Getter
+    @Setter
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -33,15 +35,18 @@ public class Book {
     @Getter
     @Setter
     @ManyToMany
-    @JoinTable(name="book_genres",
-            joinColumns = { @JoinColumn(name="book_id") },
-            inverseJoinColumns = { @JoinColumn(name="genre_id") })
-    private List<Genre> genreList;
+    @JoinTable(name="BOOK_GENRES",
+            joinColumns = { @JoinColumn(name="BOOK_ID") },
+            inverseJoinColumns = { @JoinColumn(name="GENRE_ID") })
+    private List<Genre> genreList = new ArrayList<>();
 
     @Getter
     @Setter
-    @Column(name="RATING")
-    private double rating;
+    @OneToMany(mappedBy = "BOOK", orphanRemoval = true)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "BOOK")
+    private List<UserBook> userBooks;
 
 
 }

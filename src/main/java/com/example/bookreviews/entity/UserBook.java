@@ -1,4 +1,4 @@
-package com.bookreviews.Models;
+package com.example.bookreviews.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -15,7 +15,7 @@ public class UserBook {
 
     @Getter
     @Setter
-    private ReadStatus readStatus;
+    @Enumerated(EnumType.STRING) private ReadStatus readStatus;
 
     @Getter
     @Setter
@@ -27,24 +27,21 @@ public class UserBook {
             fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             optional = false,
-            mappedBy = "book"
+            mappedBy = "BOOK"
     )
     private Book userBook;
 
-    @OneToOne(
-            fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            optional = false,
-            mappedBy = "user"
-    )
-    private User userProfile;
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="BOOK_ID", nullable=false)
+    private Book book;
+
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="USER_ID", nullable=false)
+    private User user;
 
     public UserBook(User user, ReadStatus readStatus, int percentRead, Book book) {
         this.readStatus = readStatus;
-        this.userBook = book;
-        this.userProfile = user;
+        this.book = book;
+        this.user = user;
         this.percentRead = percentRead;
-        this.id = book.getId();
     }
 
 }

@@ -1,16 +1,21 @@
-package com.bookreviews.Models;
+package com.example.bookreviews.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="REVIEW")
+@Table(
+        name = "REVIEW",
+        indexes = {
+                @Index(name = "idx_review_book_id", columnList = "BOOK_ID")
+        }
+)
 public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
+    private Long id;
 
     @Getter
     @Setter
@@ -24,12 +29,24 @@ public class Review {
 
     @Getter
     @Setter
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="BOOK_ID", nullable=false)
+    @Column(name="Book")
+    private Book book;
+
+    @Getter
+    @Setter
     @Column(name="RATING")
     private double rating;
 
     @Getter
     @Setter
-    @Column(name="Recommendation")
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="USER_ID", nullable=false)
+    @Column(name="USER")
+    private User user;
+
+    @Getter
+    @Setter
+    @Column(name="RECCOMENDATION")
     private boolean recommendation;
 
     @Getter
@@ -38,13 +55,9 @@ public class Review {
     private String commentary;
 
     @Getter
+    @Setter
     @Column(name="REVIEW_STATUS")
     private ReviewStatus reviewStatus;
 
-    public void setReviewStatus(User user, Review review, ReviewStatus newReviewStatus) {
-        if (user.getAdmin() && review.reviewStatus == ReviewStatus.Pending) {
-            review.reviewStatus = newReviewStatus;
-        }
-    }
 
 }

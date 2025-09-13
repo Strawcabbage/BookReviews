@@ -1,7 +1,6 @@
-package com.bookreviews.Repositories;
+package com.example.bookreviews.repository;
 
-import com.bookreviews.Models.Genre;
-import com.bookreviews.Models.User;
+import com.example.bookreviews.entity.User;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
