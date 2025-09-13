@@ -20,7 +20,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // adjust to your needs
                 )
                 // H2 console posts to its own endpoints; skip CSRF for it
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**").disable())
                 // H2 UI uses frames; disable frame blocking for the console
                 .headers(h -> h.frameOptions(frame -> frame.disable()))
                 // (optional) simple login for the rest of the app
