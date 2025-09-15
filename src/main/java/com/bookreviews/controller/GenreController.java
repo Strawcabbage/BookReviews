@@ -26,14 +26,13 @@ public class GenreController {
     }
 
     @GetMapping("/{id}")
-    public Genre getOne(Long id) {
+    public Genre getOne(@PathVariable Long id) {
         return genreService.getOne(id);
     }
 
-    @PostMapping // consumes defaults to application/json
+    @PostMapping
     public ResponseEntity<Genre> create(@Valid @RequestBody CreateGenreRequest req) {
         Genre created = genreService.create(req.name().trim());
-        // 201 Created + Location header
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(created.getId()).toUri();
