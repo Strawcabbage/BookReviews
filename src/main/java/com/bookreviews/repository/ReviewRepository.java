@@ -1,18 +1,21 @@
 package com.bookreviews.repository;
 
-import com.bookreviews.entity.Review;
-import com.bookreviews.entity.ReviewStatus;
+import com.bookreviews.entity.*;
+import jakarta.annotation.Nullable;
+import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface ReviewRepository extends CrudRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecificationExecutor<Review> {
 
-    List<Review> findByDisplayName(String displayName);
 
     public List<Review> findByRecommendation(boolean recommendation);
 
@@ -21,6 +24,25 @@ public interface ReviewRepository extends CrudRepository<Review, Long> {
     public List<Review> findByBookId(Long BookId);
 
     Page<Review> findByBookId(Long bookId, Pageable pageable);
+
+    @Override
+    @NonNull
+    @EntityGraph(attributePaths = {"genres"})
+    Page<Review> findAll(@Nullable Pageable pageable);
+
+    @Query(value = """
+                select b as book,
+                coalesce(avg(r.rating),0) as avgRating,
+                count(r.id) as reviewCount
+            from Review r
+            join r.book b
+            group by b
+            """,
+            countQuery = "select count(distinct b.id) from Review r join r.book b")
+    Page<BookAggregateView> listBookAggregates(Pageable pageable);
+
+
+
 
     boolean existsByBookId(Long bookId);
 

@@ -3,6 +3,7 @@ package com.bookreviews.service;
 import com.bookreviews.entity.Genre;
 import com.bookreviews.repository.GenreRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class GenreService {
         return (List<Genre>) this.genreRepository.findAll();
     }
 
+    @Transactional
     public Genre create(String name) {
         Genre genre = new Genre();
         genre.setName(name);

@@ -27,7 +27,7 @@ public class BookController {
         if ("summary".equalsIgnoreCase(view)) {
             return bookService.listWithAggregatesAsDto(pageable);
         }
-        return bookService.listRawAsDto(pageable);
+        return bookService.listDto(pageable);
     }
 
     @GetMapping("/{id}")

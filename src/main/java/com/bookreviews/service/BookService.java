@@ -25,14 +25,14 @@ public class BookService {
     private final GenreRepository genreRepository;
     private final ReviewRepository reviewRepository;
 
-    private final BookMapper mapper;
+    private final BookMapper bookMapper;
 
 
     public BookService(BookRepository bookRepository, GenreRepository genreRepository, ReviewRepository reviewRepository, BookMapper mapper) {
         this.bookRepository = bookRepository;
         this.genreRepository = genreRepository;
         this.reviewRepository = reviewRepository;
-        this.mapper = mapper;
+        this.bookMapper = mapper;
     }
 
 
@@ -44,7 +44,7 @@ public class BookService {
     @Transactional
     public Page<BookDTO> listWithAggregatesAsDto(Pageable pageable) {
         return bookRepository.listWithAggregates(pageable)
-                .map(mapper::toDto);
+                .map(bookMapper::toDto);
     }
 
     @Transactional
@@ -52,13 +52,13 @@ public class BookService {
         Book b = bookRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));
         Double avg = reviewRepository.avgRatingByBookId(id);
         long count = reviewRepository.countByBookId(id);
-        return mapper.toDto(b, avg, count);
+        return bookMapper.toDto(b, avg, count);
     }
 
     @Transactional
-    public Page<BookDTO> listRawAsDto(Pageable pageable) {
+    public Page<BookDTO> listDto(Pageable pageable) {
         return bookRepository.findAll(pageable)
-                .map(b -> mapper.toDto(b,
+                .map(b -> bookMapper.toDto(b,
                         reviewRepository.avgRatingByBookId(b.getId()),
                         reviewRepository.countByBookId(b.getId())));
     }
@@ -69,7 +69,7 @@ public class BookService {
                 .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));
         Double avg = reviewRepository.avgRatingByBookId(id);
         long count = reviewRepository.countByBookId(id);
-        return mapper.toDto(b, avg, count);
+        return bookMapper.toDto(b, avg, count);
     }
 
     @Transactional
@@ -88,7 +88,8 @@ public class BookService {
         Book book = new Book();
         book.setName(req.name().trim());
         book.setAuthor(req.author().trim());
-        book.setGenreList(genres);
+        book.setPublishDate(req.publish_date().trim());
+        book.setGenres(genres);
 
         return bookRepository.save(book);
     }
@@ -126,18 +127,21 @@ public class BookService {
             }
         }
 
+        if (dto.publish_date() != null) {
+            existing.setPublishDate(dto.publish_date());
+        }
+
         if (dto.genreIds() != null) {
             Set<Genre> genres = genreRepository.findByIdIn(dto.genreIds());
             if (genres.size() != dto.genreIds().size()) {
                 throw new EntityNotFoundException("One or more genreIds do not exist.");
             } else {
-                existing.setGenreList(genres);
+                existing.setGenres(genres);
             }
         }
         return bookRepository.save(existing);
     }
 
-    // Optional update is only allowing admins to delete books
     @Transactional
     public void delete(Long id) {
 
@@ -148,7 +152,7 @@ public class BookService {
             throw new IllegalStateException("Cannot delete a book with reviews.");
         }
 
-        book.getGenreList().clear();
+        book.getGenres().clear();
 
         bookRepository.delete(book);
     }

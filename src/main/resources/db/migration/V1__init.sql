@@ -4,8 +4,8 @@ CREATE TABLE genre (
 );
 
 CREATE TABLE book (
-                      id          BIGSERIAL PRIMARY KEY,
-                      title       TEXT NOT NULL,
-                      author      TEXT,
-                      genre_id    BIGINT REFERENCES genre(id) ON DELETE SET NULL
+                      name        TEXT NOT NULL,
+                      author      TEXT NOT NULL,
+                      id          BIGSERIAL PRIMARY KEY
+
 );

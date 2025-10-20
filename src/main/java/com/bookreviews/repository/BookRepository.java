@@ -15,28 +15,28 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"genreList"})
+    @EntityGraph(attributePaths = {"genres"})
     Page<Book> findAll(@Nullable Pageable pageable);
 
     @Override
     @NonNull
-    @EntityGraph(attributePaths = {"genreList"})
+    @EntityGraph(attributePaths = {"genres"})
     Optional<Book> findById(@Nullable Long id);
 
 
-    @EntityGraph(attributePaths = {"genreList"})
+    @EntityGraph(attributePaths = {"genres"})
     Page<Book> findByAuthorIgnoreCase(String author, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"genreList"})
+    @EntityGraph(attributePaths = {"genres"})
     Page<Book> findByNameContainingIgnoreCase(String namePart, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"genreList"})
-    Page<Book> findByGenreList_NameIgnoreCase(String genreName, Pageable pageable);
+    @EntityGraph(attributePaths = {"genres"})
+    Page<Book> findByGenres_NameIgnoreCase(String genreName, Pageable pageable);
 
     @Query(value = """
            select distinct b
            from Book b
-           left join b.genreList g
+           left join b.genres g
            where (:q is null
                      or lower(b.name)   like lower(concat('%', :q, '%'))
                      or lower(b.author) like lower(concat('%', :q, '%')))
@@ -46,7 +46,7 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
                 countQuery = """
             select count(b) from Book b
             """)
-    @EntityGraph(attributePaths = {"genreList"})
+    @EntityGraph(attributePaths = {"genres"})
     Page<Book> search(@Param("q") String q,
                       @Param("genre") String genre,
                       Pageable pageable);

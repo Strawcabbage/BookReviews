@@ -1,11 +1,11 @@
 package com.bookreviews.mapper;
 
 import com.bookreviews.dto.BookDTO;
-import com.bookreviews.entity.BookSummary;
-import com.bookreviews.entity.Genre;
-import com.bookreviews.entity.Book;
+import com.bookreviews.dto.BookListDTO;
+import com.bookreviews.entity.*;
 import org.springframework.stereotype.Component;
 import java.util.stream.Collectors;
+import java.util.List;
 
 @Component
 public class BookMapper {
@@ -15,9 +15,10 @@ public class BookMapper {
                 s.getId(),
                 s.getName(),
                 s.getAuthor(),
+                s.getPublishDate(),
                 s.getAverageRating(),
                 s.getReviewCount(),
-                java.util.List.of()
+                List.of()
         );
     }
 
@@ -26,9 +27,10 @@ public class BookMapper {
                 book.getId(),
                 book.getName(),
                 book.getAuthor(),
+                book.getPublishDate(),
                 averageRating,
                 reviewCount,
-                book.getGenreList()
+                book.getGenres()
                         .stream()
                         .map(Genre::getName)
                         .collect(Collectors.toList())
@@ -38,9 +40,20 @@ public class BookMapper {
 
     public Book toEntity(BookDTO dto) {
         Book book = new Book();
-        book.setId(dto.id());
         book.setName(dto.name());
         book.setAuthor(dto.author());
         return book;
     }
+
+    public BookListDTO toListDTO(BookAggregateView v) {
+
+        var b = v.getBook();
+        return new BookListDTO(
+                b.getId(), b.getName(), b.getAuthor(), b.getPublishDate(),
+                v.getAvgRating() != null ? v.getAvgRating() : 0.0,
+                v.getReviewCount() != null ? v.getReviewCount() : 0L
+        );
+
+    }
+
 }

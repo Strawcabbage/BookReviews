@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Entity
 @Table(
-        name = "REVIEW",
+        name = "review",
         indexes = {
                 @Index(name = "idx_review_book_id", columnList = "book_id")
         }
@@ -14,13 +14,10 @@ import lombok.Setter;
 public class Review {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     @Getter
     @Setter
-    @Column(name="displayName")
-    private String displayName;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
 
     @Getter
@@ -33,7 +30,7 @@ public class Review {
     @Getter
     @Setter
     @Column(name="rating")
-    private double rating;
+    private Double rating;
 
     @Getter
     @Setter
@@ -45,17 +42,25 @@ public class Review {
     @Getter
     @Setter
     @Column(name="reccomendation")
-    private boolean recommendation;
+    private Boolean recommendation;
+
+    @Getter
+    @Setter
+    @Column(name="title")
+    private String title;
 
     @Getter
     @Setter
     @Column(name="commentary")
     private String commentary;
 
+
     @Getter
     @Setter
-    @Column(name="reviewStatus")
-    private ReviewStatus reviewStatus;
+    @Column(name="review_status")
+    @Enumerated(EnumType.STRING) private ReviewStatus reviewStatus;
+
+    private java.time.Instant createdAt;
 
 
 }
