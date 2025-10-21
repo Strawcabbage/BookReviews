@@ -1,7 +1,7 @@
 package com.bookreviews.service;
 
 import com.bookreviews.dto.*;
-import com.bookreviews.entity.Book;
+import com.bookreviews.entity.User;
 import com.bookreviews.mapper.BookMapper;
 import com.bookreviews.mapper.ReviewMapper;
 import com.bookreviews.repository.BookRepository;
@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 import jakarta.transaction.Transactional;
 import com.bookreviews.entity.Review;
 import com.bookreviews.entity.ReviewStatus;
-import com.bookreviews.entity.User;
 import com.bookreviews.repository.ReviewRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

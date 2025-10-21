@@ -20,7 +20,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        var u = userRepository.findByDisplayName(username)
+        var u = userRepository.findByUsername(username)
                 .stream().findFirst()
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
@@ -35,10 +35,5 @@ public class MyUserDetailsService implements UserDetailsService {
         );
     }
 
-    @Bean
-    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
-
-        return org.springframework.security.crypto.argon2.Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-    }
 
 }

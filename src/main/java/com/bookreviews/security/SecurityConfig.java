@@ -1,35 +1,71 @@
 package com.bookreviews.security;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
+    // 1) Known-good encoder
     @Bean
-    SecurityFilterChain security(HttpSecurity http) throws Exception {
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    // 2) Known-good user store (dev baseline). Replace later with JPA UserDetailsService.
+    @Bean
+    UserDetailsService userDetailsService(PasswordEncoder enc) {
+        UserDetails user = User.withUsername("dev")
+                .password(enc.encode("devpass"))
+                .roles("USER")
+                .build();
+        return new InMemoryUserDetailsManager(user);
+    }
+
+    // 3) Explicit AuthenticationProvider for username/password
+    @Bean
+    AuthenticationProvider authenticationProvider(@Qualifier("userDetailsService") UserDetailsService uds, PasswordEncoder enc) {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(uds);
+        provider.setPasswordEncoder(enc);
+        return provider;
+    }
+
+    // 4) (Optional) expose AuthenticationManager if you need it elsewhere
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
+
+    // 5) Single, unambiguous filter chain for now
+    @Bean
+    SecurityFilterChain security(HttpSecurity http, AuthenticationProvider authProvider) throws Exception {
         http
-                // allow the H2 console without auth
-                .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(a -> a
                         .requestMatchers("/h2-console/**").permitAll()
-                        .anyRequest().authenticated() // adjust to your needs
+                        .anyRequest().authenticated()
                 )
-                // H2 console posts to its own endpoints; skip CSRF for it
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**").disable())
-                // H2 UI uses frames; disable frame blocking for the console
-                .headers(h -> h.frameOptions(frame -> frame.disable()))
-                // (optional) simple login for the rest of the app
-                .httpBasic(Customizer.withDefaults());
+                .csrf(c -> c.ignoringRequestMatchers("/h2-console/**"))
+                .headers(h -> h.frameOptions(f -> f.disable()))
+                .httpBasic(b -> {})                  // enable HTTP Basic
+                .authenticationProvider(authProvider); // <- registers DaoAuthenticationProvider
+
         return http.build();
     }
+
+
+
     /*
     @Bean
     SecurityFilterChain api(HttpSecurity http) throws Exception {

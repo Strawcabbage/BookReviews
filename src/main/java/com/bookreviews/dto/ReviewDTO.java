@@ -1,8 +1,6 @@
 package com.bookreviews.dto;
 
-import com.bookreviews.entity.Book;
 import com.bookreviews.entity.ReviewStatus;
-import com.bookreviews.entity.User;
 
 public record ReviewDTO(
         Long id,

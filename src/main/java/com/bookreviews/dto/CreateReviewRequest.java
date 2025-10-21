@@ -1,8 +1,5 @@
 package com.bookreviews.dto;
 
-import com.bookreviews.entity.Book;
-import com.bookreviews.entity.ReviewStatus;
-import com.bookreviews.entity.User;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

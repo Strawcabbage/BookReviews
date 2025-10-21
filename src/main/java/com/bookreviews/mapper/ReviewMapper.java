@@ -1,7 +1,6 @@
 package com.bookreviews.mapper;
 
 import com.bookreviews.dto.ReviewDTO;
-import com.bookreviews.entity.Book;
 import com.bookreviews.entity.Review;
 import com.bookreviews.entity.ReviewSummaryView;
 import org.springframework.stereotype.Component;

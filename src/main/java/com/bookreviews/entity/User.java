@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 
     @Id
@@ -31,7 +31,7 @@ public class User {
 
     @Getter
     @Setter
-    @Column(name="display_name")
+    @Column(name="username")
     private String username;
 
     @Getter
