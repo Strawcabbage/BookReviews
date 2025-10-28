@@ -17,13 +17,11 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-    // 1) Known-good encoder
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // 2) Known-good user store (dev baseline). Replace later with JPA UserDetailsService.
     @Bean
     UserDetailsService userDetailsService(PasswordEncoder enc) {
         UserDetails user = User.withUsername("dev")
@@ -33,7 +31,6 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(user);
     }
 
-    // 3) Explicit AuthenticationProvider for username/password
     @Bean
     AuthenticationProvider authenticationProvider(@Qualifier("userDetailsService") UserDetailsService uds, PasswordEncoder enc) {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -42,13 +39,11 @@ public class SecurityConfig {
         return provider;
     }
 
-    // 4) (Optional) expose AuthenticationManager if you need it elsewhere
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // 5) Single, unambiguous filter chain for now
     @Bean
     SecurityFilterChain security(HttpSecurity http, AuthenticationProvider authProvider) throws Exception {
         http
