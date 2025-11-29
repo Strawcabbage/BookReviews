@@ -19,13 +19,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
     @Getter
     @Setter
-    @Column(name = "password_hash", nullable = false, length = 100)
-    private String passwordHash;
+    @Column(name = "auth0_id", unique = true, nullable = false)
+    private String auth0Id;
 
-
+    @Getter
+    @Setter
     @Column(name="email", unique = true, nullable = false)
     private String email;
 

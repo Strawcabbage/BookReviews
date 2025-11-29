@@ -130,4 +130,18 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    @Transactional
+    public void delete(User user, Long reviewId) throws AccessDeniedException {
+
+        var review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(
+                "Review " + reviewId + " not found"));
+
+        if (!user.getAdmin() || !userRepository.existsById(review.getUser().getId())) {
+            throw new AccessDeniedException("A review can only be deleted by an admin or the User who made the review");
+        }
+
+        reviewRepository.delete(review);
+
+    }
+
 }

@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
 
@@ -44,8 +44,6 @@ public class ReviewController {
     @Get for user's reviews view (page/list view and single entry view)
 
     @Get for book's reviews view (page/list view and single entry view)
-
-
 
      */
 
