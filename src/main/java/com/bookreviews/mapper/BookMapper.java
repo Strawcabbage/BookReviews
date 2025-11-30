@@ -22,6 +22,7 @@ public class BookMapper {
         );
     }
 
+
     public BookDTO toDto(Book book, Double averageRating, Long reviewCount) {
         return new BookDTO(
                 book.getId(),

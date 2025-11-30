@@ -21,7 +21,7 @@ public class User {
 
     @Getter
     @Setter
-    @Column(name = "auth0_id", unique = true, nullable = false)
+    @Column(name="auth0Id")
     private String auth0Id;
 
     @Getter
@@ -31,7 +31,7 @@ public class User {
 
     @Getter
     @Setter
-    @Column(name="username")
+    @Column(name="username", unique = true)
     private String username;
 
     @Getter

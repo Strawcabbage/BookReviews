@@ -157,4 +157,8 @@ public class BookService {
         bookRepository.delete(book);
     }
 
+    public Page<Book> search(String q, String genre, Pageable pageable) {
+        return bookRepository.search(q, genre, pageable).map(book -> bookMapper.toDto(book));
+    }
+
 }

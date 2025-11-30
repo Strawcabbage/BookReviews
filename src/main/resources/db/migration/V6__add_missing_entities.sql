@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS "users" (
                                       id           BIGSERIAL PRIMARY KEY,
+                                      auth0Id      TEXT        NOT NULL,
                                       username     TEXT        NOT NULL UNIQUE,
                                       real_name    TEXT      NOT NULL,
                                       birth_date   TEXT        NOT NULL,

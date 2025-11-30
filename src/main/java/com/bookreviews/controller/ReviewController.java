@@ -6,11 +6,13 @@ import com.bookreviews.dto.ReviewPatchDTO;
 import com.bookreviews.entity.Book;
 import com.bookreviews.entity.Review;
 import com.bookreviews.service.ReviewService;
+import com.bookreviews.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
     private final ReviewService reviewService;
+
 
     @PostMapping
     public ResponseEntity<ReviewDTO> create(@Valid @RequestBody CreateReviewRequest review) {
@@ -31,6 +34,13 @@ public class ReviewController {
     @PatchMapping("/{id}")
     public ReviewDTO patch(@PathVariable Long id, @RequestBody ReviewPatchDTO dto) {
         return reviewService.updatePartial(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("#id == principal.userId or hasRole('ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        reviewService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
     /*

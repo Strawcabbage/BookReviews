@@ -53,4 +53,11 @@ public class BookController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/search")
+    public Page<BookDTO> search(@RequestParam(required = false) String q,
+                             @RequestParam(required = false) String genre,
+                             Pageable pageable) {
+        return bookService.search(q, genre, pageable);
+    }
+
 }

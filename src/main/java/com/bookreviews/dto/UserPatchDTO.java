@@ -12,7 +12,7 @@ public record UserPatchDTO(
         String username,
         String realName,
         String birthDate,
-        Set<Genre> userGenres,
-        List<UserBook> userBooks
+        List<Long> userGenreIds,
+        List<Long> userBookIds
 
 ) {}
