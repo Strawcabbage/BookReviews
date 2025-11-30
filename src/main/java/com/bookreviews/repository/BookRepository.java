@@ -34,8 +34,14 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
     Page<Book> findByGenres_NameIgnoreCase(String genreName, Pageable pageable);
 
     @Query(value = """
-           select distinct b
+           select distinct b.id as id,
+                           b.name as name,
+                           b.publishDate as publishDate,
+                           b.author as author,
+                           coalesce(avg(r.rating), 0) as averageRating,
+                           count(r.id) as reviewCount
            from Book b
+           left join Review r on r.book = b
            left join b.genres g
            where (:q is null
                      or lower(b.name)   like lower(concat('%', :q, '%'))
@@ -47,7 +53,7 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
             select count(b) from Book b
             """)
     @EntityGraph(attributePaths = {"genres"})
-    Page<Book> search(@Param("q") String q,
+    Page<BookSummary> search(@Param("q") String q,
                       @Param("genre") String genre,
                       Pageable pageable);
 
@@ -58,6 +64,7 @@ public interface BookRepository extends JpaRepository<Book, Long>, JpaSpecificat
     @Query(value = """
         select b.id as id,
                b.name as name,
+               b.publishDate as publishDate,
                b.author as author,
                coalesce(avg(r.rating), 0) as averageRating,
                count(r.id) as reviewCount

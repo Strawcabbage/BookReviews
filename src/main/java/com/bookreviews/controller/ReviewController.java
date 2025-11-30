@@ -1,8 +1,10 @@
 package com.bookreviews.controller;
 
+import com.bookreviews.dto.AdminReviewPatchDTO;
 import com.bookreviews.dto.CreateReviewRequest;
 import com.bookreviews.dto.ReviewDTO;
 import com.bookreviews.dto.ReviewPatchDTO;
+import com.bookreviews.entity.AppUserPrincipal;
 import com.bookreviews.entity.Book;
 import com.bookreviews.entity.Review;
 import com.bookreviews.service.ReviewService;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,12 +35,19 @@ public class ReviewController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("#id == principal.userId or hasRole('ROLE_ADMIN')")
     public ReviewDTO patch(@PathVariable Long id, @RequestBody ReviewPatchDTO dto) {
         return reviewService.updatePartial(id, dto);
     }
 
+    @PatchMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ReviewDTO patch(@PathVariable Long id, @RequestBody AdminReviewPatchDTO dto) {
+        return reviewService.adminUpdatePartial(id, dto);
+    }
+
     @DeleteMapping("/{id}")
-    @PreAuthorize("#id == principal.userId or hasRole('ADMIN')")
+    @PreAuthorize("#id == principal.userId or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         reviewService.delete(id);
         return ResponseEntity.noContent().build();

@@ -1,11 +1,9 @@
 package com.bookreviews.controller;
 
-import com.bookreviews.dto.BookDTO;
-import com.bookreviews.dto.CreateReviewRequest;
-import com.bookreviews.dto.UserDTO;
-import com.bookreviews.dto.UserPatchDTO;
+import com.bookreviews.dto.*;
 import com.bookreviews.entity.AppUserPrincipal;
 import com.bookreviews.entity.User;
+import com.bookreviews.entity.UserSummaryList;
 import com.bookreviews.service.UserService;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -24,15 +22,6 @@ public class UserController {
 
     private final UserService userService;
 
-    /*
-    @GetMapping()
-    public Page<UserDTO> list(
-            Pageable pageable,
-
-    ) {
-
-    }
-     */
 
     @GetMapping("/me")
     public UserDTO getOne(@AuthenticationPrincipal AppUserPrincipal me) {
@@ -40,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserDTO getOne(@PathVariable Long id) {
         return userService.getOneDto(id);
     }
@@ -51,13 +40,17 @@ public class UserController {
     }
 
     @PatchMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public UserDTO adminUpdatePartial(@PathVariable Long id, @RequestBody UserPatchDTO patchDTO) {
-        return userService.updatePartial(id, patchDTO);
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public UserDTO adminUpdatePartial(@PathVariable Long id, @RequestBody AdminPatchDTO patchDTO) {
+        return userService.adminUpdatePartial(id, patchDTO);
     }
 
-    @GetMapping("/users")
-    public Page<UserDTO>
+    @GetMapping("/list")
+    public Page<UserSummaryList> list(Pageable pageable,
+                                      @RequestParam(defaultValue = "summary") String view) {
+        return userService.listSummaryPage(pageable);
+    }
+
 
     /*
 

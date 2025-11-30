@@ -119,14 +119,38 @@ public class ReviewService {
     }
 
     @Transactional
-    public Review setStatus(User admin, Long reviewId, ReviewStatus newStatus) throws AccessDeniedException {
+    public ReviewDTO adminUpdatePartial(Long reviewId, AdminReviewPatchDTO dto) {
 
-        var review = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(
-                "Review " + reviewId + " not found"));
-        if (!admin.getAdmin() || review.getReviewStatus() != ReviewStatus.PENDING) throw new AccessDeniedException("Only an admin can change a pending review");
+        Review r = reviewRepository.findById(reviewId).orElseThrow(() -> new EntityNotFoundException(
+                "Review " + reviewId + " not found"));;
 
-        review.setReviewStatus(newStatus);
-        return reviewRepository.save(review);
+        String title = dto.title() == null ? null : dto.title().trim();
+        String commentary = dto.commentary() == null ? null : dto.commentary().trim();
+
+        if (title != null) {
+            if (title.isBlank()) throw new IllegalArgumentException("Title cannot be blank");
+            r.setTitle(title);
+        }
+        if (commentary != null) {
+            if (commentary.isBlank()) throw new IllegalArgumentException("Commentary cannot be blank");
+            r.setCommentary(commentary);
+        }
+        if (dto.rating() != null) {
+            Double rating = dto.rating();
+            if (rating < 1.0 || rating > 5.0) {
+                throw new IllegalArgumentException("Rating must be between 1 and 5");
+            }
+            r.setRating(dto.rating());
+        }
+        if (dto.recommendation() != null) {
+            r.setRecommendation(dto.recommendation());
+        }
+
+        if (dto.reviewStatus() != null) {
+            r.setReviewStatus(dto.reviewStatus());
+        }
+
+        return reviewMapper.toDto(reviewRepository.save(r));
     }
 
     @Transactional

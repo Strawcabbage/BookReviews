@@ -4,6 +4,7 @@ import com.bookreviews.dto.BookDTO;
 import com.bookreviews.dto.BookPatchDTO;
 import com.bookreviews.dto.CreateBookRequest;
 import com.bookreviews.entity.Book;
+import com.bookreviews.entity.BookSummary;
 import com.bookreviews.mapper.BookMapper;
 import com.bookreviews.entity.Genre;
 import com.bookreviews.repository.BookRepository;
@@ -157,8 +158,8 @@ public class BookService {
         bookRepository.delete(book);
     }
 
-    public Page<Book> search(String q, String genre, Pageable pageable) {
-        return bookRepository.search(q, genre, pageable).map(book -> bookMapper.toDto(book));
+    public Page<BookDTO> search(String q, String genre, Pageable pageable) {
+        return bookRepository.search(q, genre, pageable).map(bookMapper::toDto);
     }
 
 }
