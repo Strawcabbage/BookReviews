@@ -12,6 +12,9 @@ import com.bookreviews.repository.GenreRepository;
 import com.bookreviews.repository.ReviewRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,10 +42,12 @@ public class BookService {
 
     public Page<Book> list(Pageable pageable) {return this.bookRepository.findAll(pageable);}
 
+    @Cacheable(value = "books", key = "#id")
     public Book getById(Long id) {return bookRepository.findById(id)
             .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));}
 
     @Transactional
+    @Cacheable(value = "bookAggregates", key = "#result.pageable")
     public Page<BookDTO> listWithAggregatesAsDto(Pageable pageable) {
         return bookRepository.listWithAggregates(pageable)
                 .map(bookMapper::toDto);
@@ -56,6 +61,7 @@ public class BookService {
         return bookMapper.toDto(b, avg, count);
     }
 
+
     @Transactional
     public Page<BookDTO> listDto(Pageable pageable) {
         return bookRepository.findAll(pageable)
@@ -65,6 +71,7 @@ public class BookService {
     }
 
     @Transactional
+    @Cacheable(value = "books", key = "#result.id")
     public BookDTO getOneDto(Long id) {
         Book b = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));
@@ -74,6 +81,7 @@ public class BookService {
     }
 
     @Transactional
+    @CacheEvict(value = { "books", "bookAggregates" }, key = "#result.id", condition = "#result != null")
     public Book create(CreateBookRequest req) {
 
         if (bookRepository.existsByNameIgnoreCaseAndAuthorIgnoreCase(req.name(), req.author())) {
@@ -96,6 +104,7 @@ public class BookService {
     }
 
     @Transactional
+    @CachePut(value = "books", key = "#result.id")
     public Book updatePartial(Long id, BookPatchDTO dto) {
         Book existing = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));
@@ -144,6 +153,7 @@ public class BookService {
     }
 
     @Transactional
+    @CacheEvict(value = "books", key = "#id")
     public void delete(Long id) {
 
         Book book = bookRepository.findById(id)

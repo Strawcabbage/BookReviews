@@ -23,7 +23,7 @@ public class UserController {
     private final UserService userService;
 
 
-    @GetMapping("/me")
+    @GetMapping("/me/profile")
     public UserDTO getOne(@AuthenticationPrincipal AppUserPrincipal me) {
         return userService.getOneDto(me.getUserId());
     }
@@ -34,7 +34,7 @@ public class UserController {
         return userService.getOneDto(id);
     }
 
-    @PatchMapping("/me")
+    @PatchMapping("/me/profile")
     public UserDTO updatePartial(@AuthenticationPrincipal AppUserPrincipal me, @RequestBody UserPatchDTO patchDTO) {
         return userService.updatePartial(me.getUserId(), patchDTO);
     }
@@ -49,6 +49,18 @@ public class UserController {
     public Page<UserSummaryList> list(Pageable pageable,
                                       @RequestParam(defaultValue = "summary") String view) {
         return userService.listSummaryPage(pageable);
+    }
+
+    @DeleteMapping("/me/profile")
+    @PreAuthorize("#id == principal.userId")
+    public void delete(@AuthenticationPrincipal AppUserPrincipal me) {
+        userService.delete(me.getUserId());
+    }
+
+    @DeleteMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void delete(@PathVariable Long id) {
+        userService.delete(id);
     }
 
 

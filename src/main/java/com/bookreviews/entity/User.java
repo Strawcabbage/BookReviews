@@ -60,7 +60,7 @@ public class User {
 
     @Getter
     @Setter
-    @Column(name="admin")
+    @Column(name="admin", nullable = false)
     private Boolean admin;
 
 

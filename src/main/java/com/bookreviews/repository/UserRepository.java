@@ -16,7 +16,6 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> findByAuth0Id(String auth0Id);
 
-    Boolean existsByUsernameIgnoreCase(String username);
 
     Boolean existsByEmailIgnoreCase(String email);
 
@@ -25,11 +24,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
                u.email as email,
                u.username as username,
                size(u.userGenres) as genreCount,
-               size(u.userBooks) as userBookCount
+               size(u.userBooks) as userBookCount,
+               u.admin as admin
         from User u
     """)
     Page<UserSummaryList> ListWithSummary(Pageable pageable);
 
-
+    Boolean existsByUsername(String username);
 
 }

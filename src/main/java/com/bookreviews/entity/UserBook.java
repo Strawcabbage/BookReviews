@@ -21,10 +21,13 @@ public class UserBook {
     @Setter
     private int percentRead;
 
-
+    @Getter
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="book_id", nullable=false)
     private Book book;
 
+    @Getter
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name="user_id", nullable=false)
     private User user;
 

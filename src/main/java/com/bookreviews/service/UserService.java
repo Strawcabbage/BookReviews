@@ -55,7 +55,7 @@ public class UserService {
         } else {
             existing.setEmail(patch.email());
         }
-        if (patch.username() != null && userRepository.existsByUsernameIgnoreCase(patch.username())) {
+        if (patch.username() != null && userRepository.existsByUsername(patch.username())) {
             throw new IllegalArgumentException("A user already exists by this username");
         } else {
             existing.setUsername(patch.username());
@@ -92,7 +92,7 @@ public class UserService {
         } else {
             existing.setEmail(adminPatchDTO.email());
         }
-        if (adminPatchDTO.username() != null && userRepository.existsByUsernameIgnoreCase(adminPatchDTO.username())) {
+        if (adminPatchDTO.username() != null && userRepository.existsByUsername(adminPatchDTO.username())) {
             throw new IllegalArgumentException("A user already exists by this username");
         } else {
             existing.setUsername(adminPatchDTO.username());

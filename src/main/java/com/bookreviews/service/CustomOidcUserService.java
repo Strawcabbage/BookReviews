@@ -39,6 +39,28 @@ public class CustomOidcUserService extends OidcUserService {
         u.setEmail(oidcUser.getEmail());
         u.setRealName(oidcUser.getFullName());
         u.setAdmin(false);
+
+        String username = oidcUser.getPreferredUsername(); // maps preferred_username claim, if present
+
+        if (username == null || username.isBlank()) {
+            Object nickname = oidcUser.getClaims().get("nickname");
+            if (nickname != null && !nickname.toString().isBlank()) {
+                username = nickname.toString();
+            } else if (u.getEmail() != null && u.getEmail().contains("@")) {
+                username = u.getEmail().substring(0, u.getEmail().indexOf('@'));
+            } else {
+                username = "user-" + oidcUser.getSubject(); // very last-resort fallback
+            }
+        }
+
+        int suffix = 1;
+        String base = username;
+        while (userRepository.existsByUsername(username)) {
+            username = base + "_" + suffix++;
+        }
+
+        u.setUsername(username);
+
         return userRepository.save(u);
     }
 

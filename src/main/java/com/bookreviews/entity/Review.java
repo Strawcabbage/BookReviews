@@ -41,7 +41,7 @@ public class Review {
 
     @Getter
     @Setter
-    @Column(name="reccomendation")
+    @Column(name="recommendation")
     private Boolean recommendation;
 
     @Getter
