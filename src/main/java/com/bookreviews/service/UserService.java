@@ -9,9 +9,13 @@ import com.bookreviews.entity.UserSummaryList;
 import com.bookreviews.mapper.UserMapper;
 import com.bookreviews.repository.GenreRepository;
 import com.bookreviews.repository.UserRepository;
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -35,6 +39,7 @@ public class UserService {
         return userRepository.ListWithSummary(pageable);
     }
 
+    @Cacheable(value = "users", key = "#id")
     public UserDTO getOneDto(Long id) {
 
         User user = userRepository.findById(id)
@@ -45,6 +50,7 @@ public class UserService {
     }
 
     @Transactional
+    @CachePut(value="users", key = "#id")
     public UserDTO updatePartial(Long id, UserPatchDTO patch) {
 
         User existing = userRepository.findById(id)
@@ -82,6 +88,7 @@ public class UserService {
     }
 
     @Transactional
+    @CachePut(value="users", key = "#id")
     public UserDTO adminUpdatePartial(Long id, AdminPatchDTO adminPatchDTO) {
 
         User existing = userRepository.findById(id)
@@ -123,6 +130,7 @@ public class UserService {
     }
 
     @Transactional
+    @CacheEvict(value = "users", key = "#id")
     public void delete(Long id) {
 
         User user = userRepository.findById(id)

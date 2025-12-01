@@ -42,27 +42,15 @@ public class BookService {
 
     public Page<Book> list(Pageable pageable) {return this.bookRepository.findAll(pageable);}
 
-    @Cacheable(value = "books", key = "#id")
-    public Book getById(Long id) {return bookRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));}
-
     @Transactional
-    @Cacheable(value = "bookAggregates", key = "#result.pageable")
+    @Cacheable(value = "bookAggregates", key = "#pageable")
     public Page<BookDTO> listWithAggregatesAsDto(Pageable pageable) {
         return bookRepository.listWithAggregates(pageable)
                 .map(bookMapper::toDto);
     }
 
     @Transactional
-    public BookDTO getDetail(Long id) {
-        Book b = bookRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));
-        Double avg = reviewRepository.avgRatingByBookId(id);
-        long count = reviewRepository.countByBookId(id);
-        return bookMapper.toDto(b, avg, count);
-    }
-
-
-    @Transactional
+    @Cacheable(value = "bookAggregates", key = "#pageable")
     public Page<BookDTO> listDto(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .map(b -> bookMapper.toDto(b,
@@ -81,8 +69,8 @@ public class BookService {
     }
 
     @Transactional
-    @CacheEvict(value = { "books", "bookAggregates" }, key = "#result.id", condition = "#result != null")
-    public Book create(CreateBookRequest req) {
+    @CachePut(value = { "books"}, key = "#result.id", condition = "#result != null")
+    public BookDTO create(CreateBookRequest req) {
 
         if (bookRepository.existsByNameIgnoreCaseAndAuthorIgnoreCase(req.name(), req.author())) {
             throw new IllegalArgumentException("A book with this name and author already exists.");
@@ -100,12 +88,12 @@ public class BookService {
         book.setPublishDate(req.publish_date().trim());
         book.setGenres(genres);
 
-        return bookRepository.save(book);
+        return bookMapper.toDto(bookRepository.save(book), reviewRepository.avgRatingByBookId(book.getId()), reviewRepository.countByBookId(book.getId()));
     }
 
     @Transactional
     @CachePut(value = "books", key = "#result.id")
-    public Book updatePartial(Long id, BookPatchDTO dto) {
+    public BookDTO updatePartial(Long id, BookPatchDTO dto) {
         Book existing = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));
 
@@ -149,7 +137,7 @@ public class BookService {
                 existing.setGenres(genres);
             }
         }
-        return bookRepository.save(existing);
+        return bookMapper.toDto(bookRepository.save(existing), reviewRepository.avgRatingByBookId(id), reviewRepository.countByBookId(id));
     }
 
     @Transactional
@@ -168,6 +156,7 @@ public class BookService {
         bookRepository.delete(book);
     }
 
+    @Cacheable(value = "bookAggregates", key = "#pageable")
     public Page<BookDTO> search(String q, String genre, Pageable pageable) {
         return bookRepository.search(q, genre, pageable).map(bookMapper::toDto);
     }

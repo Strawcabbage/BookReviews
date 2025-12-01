@@ -74,10 +74,6 @@ WHERE NOT EXISTS (
       AND bg.genre_id = g.id
 );
 
--- NOTE: If you don't have 'Adventure' yet, either remove those rows
--- above or add 'Adventure' to the genre list. To keep exactly 10 genres,
--- you can change 'Adventure' to an existing genre like 'Fantasy' or 'Sci-Fi'.
-
 
 -- =========================================================
 -- USER_GENRES (>=10 rows, many-to-many via username + genre name)

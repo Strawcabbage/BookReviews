@@ -39,15 +39,13 @@ public class BookController {
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookDTO> create(@Valid @RequestBody CreateBookRequest req) {
-        Book created = bookService.create(req);
-        return ResponseEntity.ok(bookService.getOneDto(created.getId()));
+        return ResponseEntity.ok(bookService.create(req));
     }
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BookDTO patch(@PathVariable Long id, @RequestBody BookPatchDTO dto) {
-        Book updated = bookService.updatePartial(id, dto);
-        return bookService.getOneDto(updated.getId());
+        return bookService.updatePartial(id, dto);
     }
 
     @DeleteMapping("/{id}")

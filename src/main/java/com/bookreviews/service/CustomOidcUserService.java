@@ -3,6 +3,7 @@ package com.bookreviews.service;
 import com.bookreviews.entity.AppUserPrincipal;
 import com.bookreviews.entity.User;
 import com.bookreviews.repository.UserRepository;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
@@ -40,7 +41,7 @@ public class CustomOidcUserService extends OidcUserService {
         u.setRealName(oidcUser.getFullName());
         u.setAdmin(false);
 
-        String username = oidcUser.getPreferredUsername(); // maps preferred_username claim, if present
+        String username = oidcUser.getPreferredUsername();
 
         if (username == null || username.isBlank()) {
             Object nickname = oidcUser.getClaims().get("nickname");
@@ -49,7 +50,7 @@ public class CustomOidcUserService extends OidcUserService {
             } else if (u.getEmail() != null && u.getEmail().contains("@")) {
                 username = u.getEmail().substring(0, u.getEmail().indexOf('@'));
             } else {
-                username = "user-" + oidcUser.getSubject(); // very last-resort fallback
+                username = "user-" + oidcUser.getSubject();
             }
         }
 
