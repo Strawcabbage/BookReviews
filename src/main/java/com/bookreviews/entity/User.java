@@ -63,5 +63,7 @@ public class User {
     @Column(name="admin", nullable = false)
     private Boolean admin;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserAccount account;
 
 }

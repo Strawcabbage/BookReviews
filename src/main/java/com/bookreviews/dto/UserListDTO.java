@@ -8,7 +8,6 @@ public record UserListDTO (
 
         String username,
         List<UserBook> userBooks,
-
         Boolean admin
 
 ) {}

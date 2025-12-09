@@ -12,8 +12,8 @@ public class UserBookMapper {
         return new UserBookDTO(
                 userBook.getReadStatus(),
                 userBook.getPercentRead(),
-                userBook.getBook(),
-                userBook.getUser()
+                userBook.getBook().getId(),
+                userBook.getUser().getId()
         );
 
     }

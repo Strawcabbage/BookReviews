@@ -1,7 +1,6 @@
 package com.bookreviews.service;
 
 import com.bookreviews.dto.*;
-import com.bookreviews.entity.User;
 import com.bookreviews.mapper.BookMapper;
 import com.bookreviews.mapper.ReviewMapper;
 import com.bookreviews.repository.BookRepository;
@@ -27,15 +26,18 @@ public class ReviewService {
     private final ReviewMapper reviewMapper;
     private final BookRepository bookRepository;
     private final UserRepository userRepository;
+    private final LedgerService ledgerService;
 
 
     public ReviewService(ReviewRepository reviewRepository, BookMapper bookMapper,
-                         ReviewMapper reviewMapper, BookRepository bookRepository, UserRepository userRepository) {
+                         ReviewMapper reviewMapper, BookRepository bookRepository,
+                         UserRepository userRepository, LedgerService ledgerService) {
         this.reviewRepository = reviewRepository;
         this.bookMapper = bookMapper;
         this.reviewMapper = reviewMapper;
         this.bookRepository = bookRepository;
         this.userRepository = userRepository;
+        this.ledgerService = ledgerService;
     }
 
     Page<Review> findByBookId(Long bookId, Pageable pageable) {return reviewRepository.findByBookId(bookId, pageable);}
@@ -82,6 +84,12 @@ public class ReviewService {
         review.setCommentary(c.commentary());
         review.setRecommendation(c.recommendation());
         review.setReviewStatus(ReviewStatus.PENDING);
+
+        ledgerService.credit(new CreateLedgerEntryRequest(
+                review.getUser().getId(),
+                5L,
+                "Reward for review " + review.getId()));
+
         return reviewRepository.save(review);
 
     }
