@@ -13,6 +13,9 @@ public class UserBook {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     @Getter
     @Setter
     @Enumerated(EnumType.STRING) private ReadStatus readStatus;

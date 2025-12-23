@@ -2,6 +2,7 @@ package com.bookreviews.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 public class UserAccount {
@@ -17,6 +18,8 @@ public class UserAccount {
     @Version
     private Long version;
 
+    @Getter
+    @Setter
     private long balance;
 
 }

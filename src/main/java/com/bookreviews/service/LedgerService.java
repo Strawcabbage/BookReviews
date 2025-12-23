@@ -40,7 +40,7 @@ public class LedgerService {
     @Transactional
     public LedgerEntryDTO debit(Long userId, long amount,
                                 LedgerType type, String description) {
-        UserAccount account = accountRepo.findById(userId)
+        UserAccount account = accountRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Account " + userId + " not found"));
 
         long newBalance = account.getBalance() - amount;

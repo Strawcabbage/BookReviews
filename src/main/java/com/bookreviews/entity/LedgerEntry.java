@@ -16,6 +16,9 @@ public class LedgerEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     @Setter
     @Getter
     @ManyToOne(fetch = FetchType.LAZY)
