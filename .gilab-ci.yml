@@ -1,0 +1,76 @@
+stages:
+  - build
+  - test
+  - docker
+  - deploy
+
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  POSTGRES_DB: bookreviews
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+# Cache Maven dependencies between runs
+cache:
+  paths:
+    - .m2/repository/
+
+# ---- STAGE 1: Compile ----
+build:
+  stage: build
+  image: maven:3.9-eclipse-temurin-21  # adjust Java version to match yours
+  script:
+    - ./mvnw clean compile -DskipTests
+  artifacts:
+    paths:
+      - target/
+    expire_in: 1 hour
+
+# ---- STAGE 2: Test (with Postgres service) ----
+test:
+  stage: test
+  image: maven:3.9-eclipse-temurin-21
+  services:
+    - name: postgres:15
+      alias: postgres
+  variables:
+    SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/bookreviews"
+    SPRING_DATASOURCE_USERNAME: postgres
+    SPRING_DATASOURCE_PASSWORD: postgres
+    SPRING_FLYWAY_URL: "jdbc:postgresql://postgres:5432/bookreviews"
+  script:
+    - ./mvnw verify
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+
+# ---- STAGE 3: Build Docker Image ----
+docker-build:
+  stage: docker
+  image: docker:24
+  services:
+    - docker:24-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker build -t $CI_REGISTRY_IMAGE:latest .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - docker push $CI_REGISTRY_IMAGE:latest
+  only:
+    - master
+
+# ---- STAGE 4: Deploy (example placeholder) ----
+deploy:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "Deploy step — plug in your target here (AWS ECS, Kubernetes, Railway, etc.)"
+    # Example for a VM: ssh into your server and docker pull + restart
+    # - ssh user@your-server "docker pull $CI_REGISTRY_IMAGE:latest && docker-compose up -d"
+  only:
+    - master
+  when: manual  # manual gate so you control when deploys happen

@@ -7,6 +7,7 @@ import com.bookreviews.service.GenreService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -31,12 +32,20 @@ public class GenreController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Genre> create(@Valid @RequestBody CreateGenreRequest req) {
         Genre created = genreService.create(req.name().trim());
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest().path("/{id}")
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(location).body(created);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        genreService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

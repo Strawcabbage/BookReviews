@@ -19,7 +19,7 @@ public class GenreService {
     public Set<Genre> resolveByIds(List<Long> genre_ids) {return this.genreRepository.findByIdIn(genre_ids);}
 
     public Genre getOne(Long id) {return this.genreRepository.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Book " + id + " not found"));}
+            .orElseThrow(() -> new EntityNotFoundException("Genre " + id + " not found"));}
 
     public List<Genre> getAll() {
         return (List<Genre>) this.genreRepository.findAll();
@@ -31,6 +31,12 @@ public class GenreService {
         genre.setName(name);
         genreRepository.save(genre);
         return genre;
+    }
+
+    public void delete(Long id) {
+        Genre genre = genreRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Genre " + id + " not found."));
+        genreRepository.delete(genre);
     }
 
 }
